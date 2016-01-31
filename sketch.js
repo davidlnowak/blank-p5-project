@@ -1,9 +1,7 @@
 var setup = function setup() {
   createCanvas(800, 600);
   background('#B2D6FB');
-}
 
-var draw = function () {
   // upper roof
   fill('#2B2820');
   quad(100,100, 650,100, 650,240, 60,240); // upper roof sectiond
