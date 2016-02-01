@@ -2,29 +2,72 @@ var setup = function setup() {
   createCanvas(800, 600);
   background('#B2D6FB');
 
-  // upper roof
-  fill('#2B2820');
-  quad(100,100, 650,100, 650,240, 60,240); // upper roof sectiond
-  fill('#441209');
-  rect(650,50, 50,190); // chimney
-  fill('000')
+  var house = {
+    x: 100,
+    y: 240,
+    houseWidth: 600,
+    houseHeight: 350,
+    roofHeight: 140,
+    chimneyHeight: 190,
+    chimneyWidth: 50,
+    brickColor: color('#441209'),
+    roofColor: color('#2B2820'),
+    entranceColor: color('#F5F3E2'),
+    doorColor: color('#362B08'),
 
-  // house--lower section
-  fill('#441209');
-  rect(100,240, 600,350); // main body of house
-  fill('#F5F3E2');
-  rect(125,450, 150,140); // front-door porch area
+    draw: function () {
+      this.drawUpperRoof();
+      this.drawChimney();
+      this.drawBody();
+      this.drawEntrance();
+      this.drawAFramePeaks();
+    },
+    drawUpperRoof: function () {
+      var roofWidth = this.x + this.houseWidth - this.chimneyWidth;
+      var roofOverhangWidth = this.houseWidth * .05;
+      var roofY = this.y - this.roofHeight;
 
-  fill('#362B08');
-  rect(160,460, 80,130); // front-door
-  fill('000');
-  ellipse(230,550, 10,10); // door knob
+      fill(this.roofColor);
+      quad(this.x, roofY, roofWidth, roofY, roofWidth, this.y, this.x-roofOverhangWidth, this.y); // upper roof section
+    },
+    drawChimney: function () {
+      var chimneyX = this.x + this.houseWidth - this.chimneyWidth;
+      var chimneyY = this.y - this.chimneyHeight;
 
-  // a-frame peaks
-  fill('#ADA98C');
-  triangle(270,400, 500,50, 730,400); // main roof-peak
-  triangle(100,450, 200,300, 300,450); // door roof-peak
-  fill('000');
+      fill(this.brickColor);
+      rect(chimneyX, chimneyY, this.chimneyWidth, this.chimneyHeight); // chimney
+    },
+    drawBody: function () {
+      fill(this.brickColor);
+      rect(this.x, this.y, this.houseWidth, this.houseHeight); // main body of house
+    },
+    drawEntrance: function () {
+      fill(this.entranceColor);
+      rect(125,450, 150,140); // front-door porch area
+
+      fill(this.doorColor);
+      rect(160,460, 80,130); // front-door
+
+      fill('000');
+      ellipse(230,550, 10,10); // door knob
+    },
+    drawAFramePeaks: function () {
+      fill('#ADA98C');
+      var x1 = 270;
+      var x2 = 500;
+      var x3 = 730;
+      triangle(x1,400, x2,50, x3,400); // main roof-peak
+
+      x1 = this.x;
+      x3 = (this.houseWidth  / 3) + x1;
+      x2 = x3 - x1;
+      triangle(x1,450, x2,300, x3,450); // door roof-peak
+    }
+  };
+
+  house.draw();
+
+
 
   // main windows--lower section
   fill('#362B08');
@@ -87,4 +130,4 @@ var setup = function setup() {
   fill('#2E2E2E');
   rect(465,275, 10,80);
   rect(525,275, 10,80);
-}
+};
