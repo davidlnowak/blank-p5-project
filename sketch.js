@@ -87,4 +87,4 @@ var setup = function setup() {
   fill('#2E2E2E');
   rect(465,275, 10,80);
   rect(525,275, 10,80);
-}
+};
