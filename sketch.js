@@ -43,4 +43,4 @@ var setup = function () {
 
   line(300, 200, 380, 90);
   ellipse(380, 90, 6, 6);
-}
+};
