@@ -54,6 +54,7 @@ var setup = function setup() {
     drawEntrance: function () {
       var peakY = (this.y + this.houseHeight) * .51;
       var baseY = (this.y + this.houseHeight) * .76;
+      baseY = peakY + this.houseHeight * .429;
       var xLeft = this.x;
       var xRight = (this.houseWidth  / 3) + xLeft;
       var xMiddle = xLeft + (xRight - xLeft) / 2;
@@ -111,6 +112,8 @@ var setup = function setup() {
       var x2 = xSecondWindow + (windowWidth / 2);
 
       //baseY = this.y + (this.roofHeight + this.houseHeight) * .185
+      baseY = peakY + this.houseHeight;
+
       fill('#ADA98C');
       triangle(x1, baseY, x2, peakY, x3, baseY); // main roof-peak
 
@@ -165,5 +168,5 @@ var setup = function setup() {
     }
   };
 
-  house.draw(100, 240);
+  house.draw(150, 500);
 };
