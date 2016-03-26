@@ -1,10 +1,10 @@
 var setup = function setup() {
-  createCanvas(800, 600);
+  createCanvas(1200, 1200);
   background('#B2D6FB');
 
   var house = {
-    x: 100,
-    y: 240,
+    x: 0,
+    y: 0,
     houseWidth: 600,
     houseHeight: 350,
     roofHeight: 140,
@@ -14,14 +14,21 @@ var setup = function setup() {
     roofColor: color('#2B2820'),
     entranceColor: color('#F5F3E2'),
     doorColor: color('#362B08'),
+    windowDivider: 0,
 
-    draw: function () {
+    draw: function (x, y) {
+      this.x = x;
+      this.y = y;
+
+      this.windowDivider = this.houseWidth * .012;
+
       this.drawUpperRoof();
       this.drawChimney();
       this.drawBody();
       this.drawEntrance();
-      this.drawAFramePeaks();
+      this.drawWindows();
     },
+
     drawUpperRoof: function () {
       var roofWidth = this.x + this.houseWidth - this.chimneyWidth;
       var roofOverhangWidth = this.houseWidth * .05;
@@ -30,6 +37,7 @@ var setup = function setup() {
       fill(this.roofColor);
       quad(this.x, roofY, roofWidth, roofY, roofWidth, this.y, this.x-roofOverhangWidth, this.y); // upper roof section
     },
+
     drawChimney: function () {
       var chimneyX = this.x + this.houseWidth - this.chimneyWidth;
       var chimneyY = this.y - this.chimneyHeight;
@@ -37,97 +45,125 @@ var setup = function setup() {
       fill(this.brickColor);
       rect(chimneyX, chimneyY, this.chimneyWidth, this.chimneyHeight); // chimney
     },
+
     drawBody: function () {
       fill(this.brickColor);
       rect(this.x, this.y, this.houseWidth, this.houseHeight); // main body of house
     },
+
     drawEntrance: function () {
-      fill(this.entranceColor);
-      rect(125,450, 150,140); // front-door porch area
+      var peakY = (this.y + this.houseHeight) * .51;
+      var baseY = (this.y + this.houseHeight) * .76;
+      var xLeft = this.x;
+      var xRight = (this.houseWidth  / 3) + xLeft;
+      var xMiddle = xLeft + (xRight - xLeft) / 2;
 
-      fill(this.doorColor);
-      rect(160,460, 80,130); // front-door
-
-      fill('000');
-      ellipse(230,550, 10,10); // door knob
-    },
-    drawAFramePeaks: function () {
+      // door roof-peak
       fill('#ADA98C');
-      var x1 = 270;
-      var x2 = 500;
-      var x3 = 730;
-      triangle(x1,400, x2,50, x3,400); // main roof-peak
+      triangle(xLeft,baseY, xMiddle,peakY, xRight,baseY);
 
-      x1 = this.x;
-      x3 = (this.houseWidth  / 3) + x1;
-      x2 = x3 - x1;
-      triangle(x1,450, x2,300, x3,450); // door roof-peak
+      var entranceWidth = (xRight - xLeft) * .80;
+      xLeft = xMiddle - (entranceWidth / 2);
+      var entranceHeight = (this.y + this.houseHeight) - baseY;
+      fill(this.entranceColor);
+      rect(xLeft, baseY, entranceWidth, entranceHeight); // front-door porch area
+
+      //  window above door roof-peak
+      var windowHeight = this.houseHeight * .11;
+      var windowY = (this.y + this.houseHeight) * .42;
+
+      fill('#FFFAAE');
+      rect(xLeft, windowY, entranceWidth, windowHeight);
+      fill('#2E2E2E');
+      rect(xLeft + (entranceWidth / 2) - this.windowDivider / 2, windowY, this.windowDivider, windowHeight);
+
+      // front-door
+      var doorWidth = entranceWidth * .6;
+      xLeft = xMiddle - (doorWidth / 2);
+      var doorHeight = (entranceHeight * .9);
+      baseY = (this.y + this.houseHeight) - doorHeight;
+      fill(this.doorColor);
+      rect(xLeft,baseY, doorWidth,doorHeight);
+
+      // door knob
+      var handleSize = doorWidth * .1;
+      baseY = baseY + (doorHeight / 2)
+      xLeft = xLeft + doorWidth - handleSize;
+      fill('000');
+      ellipse(xLeft,baseY, handleSize,handleSize);
+    },
+
+    drawWindows: function () {
+      // main windows--lower section
+      var fillFactor = this.houseWidth * .04;
+      var windowWidth = this.houseWidth * .17;
+      var windowHeight = this.houseHeight * .43;
+      var xFirstWindow = this.x + fillFactor + this.houseWidth / 3;
+      var xSecondWindow = xFirstWindow + fillFactor + windowWidth;
+      var xThirdWindow = xSecondWindow + fillFactor + windowWidth;
+
+      var peakY = this.y - this.chimneyHeight;
+      var baseY = (this.y + this.houseHeight) * .68;
+      var peakOverhangWidth = this.houseWidth * .05;
+      var x3 = this.x + this.houseWidth + peakOverhangWidth;
+      var extensionFromWindowWidth = x3 - xThirdWindow - windowWidth;
+      var x1 = xFirstWindow - extensionFromWindowWidth;
+      var x2 = xSecondWindow + (windowWidth / 2);
+
+      //baseY = this.y + (this.roofHeight + this.houseHeight) * .185
+      fill('#ADA98C');
+      triangle(x1, baseY, x2, peakY, x3, baseY); // main roof-peak
+
+      fill('#362B08');
+      rect(xFirstWindow, baseY, windowWidth, windowHeight); // front-windows (1 of 3)
+      this.installWindowsPanes(xFirstWindow, baseY, windowWidth, windowHeight);
+
+      fill('#362B08');
+      rect(xSecondWindow, baseY, windowWidth, windowHeight); // front-windows (2 of 3)
+      this.installWindowsPanes(xSecondWindow, baseY, windowWidth, windowHeight);
+
+      fill('#362B08');
+      rect(xThirdWindow, baseY, windowWidth, windowHeight); // front-windows (3 of 3)
+      this.installWindowsPanes(xThirdWindow, baseY, windowWidth, windowHeight);
+
+      var railLength = (windowWidth * 3) + (fillFactor * 2);
+      fill('#2E2E2E');
+      rect(xFirstWindow, baseY + windowHeight, railLength, fillFactor * .5); // bottom rail of windows
+
+      // window above main roof-peak
+      var upperWindowWidth = railLength * .60;
+      var upperWindowHeight = this.houseHeight * .23;
+      var upperWindowX = x2 - upperWindowWidth / 2;
+      var upperWindowY = (this.y + this.houseHeight) * .47;
+
+      fill('#FFFAAE');
+      rect(upperWindowX, upperWindowY, upperWindowWidth, upperWindowHeight);
+      fill('#2E2E2E');
+      rect(upperWindowX + (upperWindowWidth / 3) - this.windowDivider / 2, upperWindowY, this.windowDivider, upperWindowHeight);
+      rect(upperWindowX + (upperWindowWidth / 3) * 2 + this.windowDivider / 2 , upperWindowY, this.windowDivider, upperWindowHeight);
+    },
+
+    installWindowsPanes: function(windowX, baseY, windowWidth, windowHeight) {
+      var fillFactorX = windowWidth * .08;
+      var panelWidth = (windowWidth - fillFactorX * 4) / 3;
+
+      var fillFactorY = 5;
+      var panelHeight = (windowHeight - fillFactorY * 4) / 3;
+
+      var x = windowX + fillFactorX;
+      var y = baseY + fillFactorY;
+
+      fill('#FFFAAE');
+      for (var row = 0; row < 3; row ++) {
+        for (var col = 0; col < 3; col ++) {
+          rect(x, y, panelWidth, panelHeight);
+          y += panelHeight + fillFactorY;
+        }
+        x += panelWidth + fillFactorX;
+        y = baseY + fillFactorY;
+      }
     }
   };
 
-  house.draw();
-
-
-
-  // main windows--lower section
-  fill('#362B08');
-  rect(325,400, 100,150); // front-windows (1 of 3)
-  rect(450,400, 100,150); // front-windows (2 of 3)
-  rect(575,400, 100,150); // front-windows (3 of 3)
-
-  fill('#2E2E2E');
-  rect(325,550, 350,10); // bottom rail of windows
-
-  // window panes for first window
-  fill('#FFFAAE');
-  rect(335,405, 20,40);
-  rect(365,405, 20,40);
-  rect(395,405, 20,40);
-
-  rect(335,455, 20,40);
-  rect(365,455, 20,40);
-  rect(395,455, 20,40);
-
-  rect(335,505, 20,40);
-  rect(365,505, 20,40);
-  rect(395,505, 20,40);
-
-  //window panes for second window
-  rect(460,405, 20,40);
-  rect(490,405, 20,40);
-  rect(520,405, 20,40);
-
-  rect(460,455, 20,40);
-  rect(490,455, 20,40);
-  rect(520,455, 20,40);
-
-  rect(460,505, 20,40);
-  rect(490,505, 20,40);
-  rect(520,505, 20,40);
-
-  //window panes for third window
-  rect(585,405, 20,40);
-  rect(615,405, 20,40);
-  rect(645,405, 20,40);
-
-  rect(585,455, 20,40);
-  rect(615,455, 20,40);
-  rect(645,455, 20,40);
-
-  rect(585,505, 20,40);
-  rect(615,505, 20,40);
-  rect(645,505, 20,40);
-
-  //  window above door roof-peak
-  fill('#FFFAAE');
-  rect(125,250, 150,38);
-  fill('#2E2E2E');
-  rect(195,250, 10,38);
-
-  // window above main roof-peak
-  fill('#FFFAAE');
-  rect(410,275, 180,80);
-  fill('#2E2E2E');
-  rect(465,275, 10,80);
-  rect(525,275, 10,80);
+  house.draw(100, 240);
 };
