@@ -16,10 +16,15 @@ var setup = function setup() {
     doorColor: color('#362B08'),
     windowDivider: 0,
 
-    draw: function (x, y) {
+    draw: function (x, y, sizeFactor) {
+      this.houseWidth *= sizeFactor;
+      this.houseHeight *= sizeFactor;
+      this.roofHeight *= sizeFactor;
+      this.chimneyHeight *= sizeFactor;
+      this.chimneyWidth *= sizeFactor;
+
       this.x = x;
       this.y = y;
-
       this.windowDivider = this.houseWidth * .012;
 
       this.drawUpperRoof();
@@ -52,7 +57,7 @@ var setup = function setup() {
     },
 
     drawEntrance: function () {
-      var peakY = (this.y + this.houseHeight) * .51;
+      var peakY = this.y + this.houseHeight / 6;
       var baseY = peakY + this.houseHeight * .429;
       var xLeft = this.x;
       var xRight = (this.houseWidth  / 3) + xLeft;
@@ -60,17 +65,18 @@ var setup = function setup() {
 
       // door roof-peak
       fill('#ADA98C');
-      triangle(xLeft,baseY, xMiddle,peakY, xRight,baseY);
+      triangle(xLeft, baseY, xMiddle, peakY, xRight, baseY);
 
+      // front-door porch area
       var entranceWidth = (xRight - xLeft) * .80;
       xLeft = xMiddle - (entranceWidth / 2);
       var entranceHeight = (this.y + this.houseHeight) - baseY;
       fill(this.entranceColor);
-      rect(xLeft, baseY, entranceWidth, entranceHeight); // front-door porch area
+      rect(xLeft, baseY, entranceWidth, entranceHeight);
 
       //  window above door roof-peak
       var windowHeight = this.houseHeight * .11;
-      var windowY = (this.y + this.houseHeight) * .42;
+      var windowY = this.y + ((peakY - this.y) - windowHeight) / 2;
 
       fill('#FFFAAE');
       rect(xLeft, windowY, entranceWidth, windowHeight);
@@ -110,7 +116,6 @@ var setup = function setup() {
       var x1 = xFirstWindow - extensionFromWindowWidth;
       var x2 = xSecondWindow + (windowWidth / 2);
 
-      //baseY = this.y + (this.roofHeight + this.houseHeight) * .185
       baseY = peakY + this.houseHeight;
 
       fill('#ADA98C');
@@ -136,7 +141,7 @@ var setup = function setup() {
       var upperWindowWidth = railLength * .60;
       var upperWindowHeight = this.houseHeight * .23;
       var upperWindowX = x2 - upperWindowWidth / 2;
-      var upperWindowY = (this.y + this.houseHeight) * .47;
+      var upperWindowY = this.y + ((baseY - this.y) - upperWindowHeight) / 2;
 
       fill('#FFFAAE');
       rect(upperWindowX, upperWindowY, upperWindowWidth, upperWindowHeight);
@@ -167,5 +172,5 @@ var setup = function setup() {
     }
   };
 
-  house.draw(150, 500);
+  house.draw(125, 250, .8);
 };
