@@ -53,8 +53,7 @@ var setup = function setup() {
 
     drawEntrance: function () {
       var peakY = (this.y + this.houseHeight) * .51;
-      var baseY = (this.y + this.houseHeight) * .76;
-      baseY = peakY + this.houseHeight * .429;
+      var baseY = peakY + this.houseHeight * .429;
       var xLeft = this.x;
       var xRight = (this.houseWidth  / 3) + xLeft;
       var xMiddle = xLeft + (xRight - xLeft) / 2;
